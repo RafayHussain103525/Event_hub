@@ -1,7 +1,5 @@
 from fastapi import FastAPI
+from api.endpoints import events
 
 app = FastAPI()
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+app.include_router(events.router, prefix="/events", tags=["events"])
