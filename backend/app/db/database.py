@@ -3,7 +3,7 @@ import os
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 DATABASE_URL = (f"postgresql+asyncpg://"
-                f"user:{os.getenv('POSTGRES_PASSWORD')}@db:5432/eventdb_hub" 
+                f"{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@db:5432/{os.getenv('POSTGRES_DB')}" 
             )
  
 engine = create_async_engine(DATABASE_URL, echo=True)
