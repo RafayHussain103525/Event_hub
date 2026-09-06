@@ -21,7 +21,7 @@ class EventOut(BaseModel):
     location: str
     description: str
     poster_url: HttpUrl|None
-    organizer_id: int|None
+    organizer_id: int
 
 
 

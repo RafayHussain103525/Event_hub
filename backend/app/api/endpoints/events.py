@@ -1,6 +1,8 @@
 from datetime import date
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from core.dependencies import get_current_organizer
+from core.dependencies import get_current_user
 from schemas.events import EventIn, EventOut
 from db.database import get_async_session
 from schemas.events import EventIn, EventOut
@@ -16,18 +18,25 @@ router = APIRouter()
 
 # creating a new event
 @router.post("/", response_model=EventOut, status_code=status.HTTP_201_CREATED)
-async def create_new_event(event: EventIn, db: AsyncSession = Depends(get_async_session)):
+async def create_new_event(event: EventIn, db: AsyncSession = Depends(get_async_session), current_organizer = Depends(get_current_organizer)):
+    event.organizer_id = current_organizer.id  
     new_event = await create_event(db, event)
     return new_event
     
 # getting all events   
 @router.get("/all_events", response_model=list[EventOut])
 async def get_all_events_endpoint(limit: int = 10, offset: int = 0, db: AsyncSession = Depends(get_async_session)):
-
     events = await get_all_events(db, limit, offset)
     return events
 
 # getting events by organizer id
+@router.get("/my_events", response_model=list[EventOut])
+async def get_events_by_organizer(limit: int = 10, offset: int = 0, db: AsyncSession = Depends(get_async_session), current_organizer = Depends(get_current_organizer)):
+
+    events = await get_events_by_organizer_id(db, current_organizer.id, limit, offset)
+    return events
+
+# getting events by id
 @router.get("/{event_id}", response_model=EventOut)
 async def get_event(event_id: int, db: AsyncSession = Depends(get_async_session)):
     event = await get_event_by_id(db, event_id)
@@ -39,16 +48,6 @@ async def get_event(event_id: int, db: AsyncSession = Depends(get_async_session)
 @router.get("/location/{event_location}", response_model=list[EventOut])
 async def get_events_by_location(event_location: str, limit: int = 10, offset: int = 0, db: AsyncSession = Depends(get_async_session)):
     events = await get_event_by_location(db, event_location, limit, offset)
-    return events
-
-# getting events by organizer id
-@router.get("/event_organizer/{organizer_id}", response_model=list[EventOut])
-async def get_events_by_organizer(organizer_id: int, limit: int = 10, offset: int = 0, db: AsyncSession = Depends(get_async_session)):
-    organizer = await get_organizer_by_id(db, organizer_id)
-    if not organizer:
-        raise NotFoundException(f"Organizer with id {organizer_id} not found")
-    
-    events = await get_events_by_organizer_id(db, organizer_id, limit, offset)
     return events
 
 # getting events by organizer name

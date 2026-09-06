@@ -27,7 +27,7 @@ async def create_event(db: AsyncSession, event: EventIn) -> Event:
         sqlstate = getattr(e.orig, "sqlstate", None)
 
         if sqlstate == "23505":  # unique_violation
-            raise AlreadyExistsException("Event with this name already exists") from e
+            raise AlreadyExistsException("You have an Event with this name already ") from e
 
         if sqlstate == "23503":  # foreign_key_violation
             raise BadRequestException("Invalid organizer_id: no such organizer exists") from e

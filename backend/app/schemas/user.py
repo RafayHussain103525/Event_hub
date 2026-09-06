@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 class UserIn(BaseModel):
@@ -5,6 +7,7 @@ class UserIn(BaseModel):
     email: EmailStr = Field(..., max_length=100)
     phone_number: str = Field(..., max_length=20)
     password: str = Field(..., min_length=8, max_length=110)
+    
 
 class UserLogin(BaseModel):
     email: EmailStr = Field(..., max_length=100)
@@ -17,3 +20,9 @@ class UserOut(BaseModel):
     email: EmailStr
     phone_number: str | None
 
+class TokenResponseUser(BaseModel):
+    access_token: str
+    token_type: str
+    refresh_token: str
+    expires_in: int
+    account: UserOut  

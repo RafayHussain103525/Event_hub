@@ -4,6 +4,7 @@ from sqlalchemy import select
 from db.model import Organizer
 from schemas.organizer import OrganizerIn
 from execution import AlreadyExistsException
+from core.security import get_password_hash
 
 class OrganizerAlreadyExists(Exception):
     pass
@@ -13,7 +14,7 @@ async def create_organizer(db: AsyncSession, organizer: OrganizerIn) -> Organize
         name=organizer.name.lower().strip(),
         email=organizer.email.lower(),
         phone_number=organizer.phone_number,
-        hashed_password = "something here later"
+        hashed_password =await get_password_hash(organizer.password)
     )
 
     db.add(new_organizer)
