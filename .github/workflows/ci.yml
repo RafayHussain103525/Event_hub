@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine        # same image as your docker-compose.yml
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test_eventdb_hub  # must match TEST_DATABASE_URL in conftest.py
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U user"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # ⚠️ core/security.py reads these with os.environ["..."] at import time.
+      # If any is missing, EVERY test fails with KeyError before running.
+      SECRET_KEY: ci-dummy-key-not-for-prod
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      REFRESH_TOKEN_EXPIRE_DAYS: "7"
+      # Used by db/database.py when the engine object is created
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test_eventdb_hub
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"          # matches your Dockerfile (3.12.3)
+          cache: pip
+          cache-dependency-path: backend/requirement-dev.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirement-dev.txt
+
+      - name: Run tests
+        working-directory: backend/app     # ← critical, see gotcha #3
+        run: pytest -v --tb=short
