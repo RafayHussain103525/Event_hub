@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from db.model import Event, Organizer
 from schemas.events import EventIn
@@ -43,11 +43,11 @@ async def create_event(db: AsyncSession, event: EventIn) -> Event:
     await db.refresh(new_event)
     return new_event
 
-async def get_event_by_name(db: AsyncSession, name: str) -> Event | None:
+async def get_event_by_name(db: AsyncSession, name: str) -> Sequence[Event]:
     result = await db.execute(
-        select(Event).where(Event.name == name.lower().strip())
+        select(Event).where(func.lower(Event.name) == name.lower().strip())
     )
-    return result.scalar_one_or_none()
+    return result.scalars().all()
 
 async def get_event_by_location(db: AsyncSession, event_location: str, limit: int = 10, offset: int = 0) -> Sequence[Event]:
     result = await db.execute(

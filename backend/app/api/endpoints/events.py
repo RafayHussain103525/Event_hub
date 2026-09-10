@@ -70,7 +70,7 @@ async def get_events_by_date_range_endpoint(start_date: date, end_date: date, li
         raise BadRequestException("Start date must be less than or equal to end date")
 
 # getting events by name
-@router.get("/name/{event_name}", response_model=EventOut)
+@router.get("/name/{event_name}", response_model=list[EventOut])
 async def get_events_by_name(event_name: str,db: AsyncSession = Depends(get_async_session)):
     events = await get_event_by_name(db, event_name)
     if not events:
