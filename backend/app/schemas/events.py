@@ -12,7 +12,7 @@ class EventIn(BaseModel):
    
 class EventUpdate(BaseModel):
     name: str|None = Field(None, max_length=100)
-    date: datetime.date|None 
+    date: datetime.date|None = None
     location: str|None = Field(None, max_length=200)
     description: str|None = Field(None, max_length=500)
     image_url: HttpUrl|None = Field(None, description="URL of the event image")

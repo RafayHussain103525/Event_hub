@@ -22,6 +22,7 @@ from services.event_service import (
     get_all_events,
     get_events_by_date_range,
     delete_event,
+    update_event,
 )
 
 router = APIRouter()
@@ -86,8 +87,8 @@ async def delete_event_endpoint(
         )
 
 
-@router.patch("/update/{event_id}", response_model=EventOut)
-async def update_event(
+@router.patch("/{event_id}", response_model=EventOut)
+async def update_event_endpoint(
     event_id: int,
     event_update: EventUpdate,
     db: AsyncSession = Depends(get_async_session),
