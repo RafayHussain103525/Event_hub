@@ -48,10 +48,10 @@ class Event(Base):
         UniqueConstraint("name", "organizer_id", name="uq_event_name_per_organizer"),
     )
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(100))
+    name: Mapped[str] = mapped_column(String(100), index=True)
     description: Mapped[str] = mapped_column(String(500))
-    date: Mapped[Pydate] = mapped_column(Date)
-    location: Mapped[str] = mapped_column(String(200))
+    date: Mapped[Pydate] = mapped_column((Date), index=True)
+    location: Mapped[str] = mapped_column(String(200), index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

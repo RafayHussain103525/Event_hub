@@ -22,7 +22,12 @@ class OrganizerOut(BaseModel):
     name: str
     email: EmailStr
     phone_number: str | None
-    
+
+class OrganizerUpdate(BaseModel):
+    name: str | None = Field(None, max_length=100)
+    email: EmailStr | None = Field(None, max_length=100)
+    phone_number: str | None = Field(None, max_length=20)
+    password: str | None = Field(None, min_length=8, max_length=110)
 
 
 class TokenResponseOrganizer(BaseModel):

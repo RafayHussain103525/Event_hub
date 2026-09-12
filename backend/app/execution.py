@@ -26,3 +26,7 @@ class InvalidCredentialsException(DomainException):
 class DatabaseException(DomainException):
     status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR
     detail: str = "Database error"
+
+class ForbiddenException(DomainException):
+    status_code: int = status.HTTP_403_FORBIDDEN
+    detail: str = "You do not have permission to perform this action"

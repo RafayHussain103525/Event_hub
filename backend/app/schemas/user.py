@@ -7,7 +7,12 @@ class UserIn(BaseModel):
     email: EmailStr = Field(..., max_length=100)
     phone_number: str = Field(..., max_length=20)
     password: str = Field(..., min_length=8, max_length=110)
-    
+
+class UserUpdate(BaseModel):
+    username: str | None = Field(None, max_length=50)
+    email: EmailStr | None = Field(None, max_length=100)
+    phone_number: str | None = Field(None, max_length=20)
+    password: str | None = Field(None, min_length=8, max_length=110)
 
 class UserLogin(BaseModel):
     email: EmailStr = Field(..., max_length=100)
