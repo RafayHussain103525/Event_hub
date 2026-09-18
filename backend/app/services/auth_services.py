@@ -1,7 +1,7 @@
 from services.organizer_services import get_organizer_by_email
 from services.user_service import get_user_by_email
 from core.security import verify_password, get_password_hash
-from execution import InvalidCredentialsException
+from Error_handling.execution import InvalidCredentialsException
 from db.model import Organizer, User
 
 dummy_hash = "$argon2id$v=19$m=65536,t=3,p=4$somefakesalt$somefakehash"

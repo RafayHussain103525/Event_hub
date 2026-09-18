@@ -5,7 +5,7 @@ from db.model import Event, Organizer
 from schemas.events import EventIn, EventUpdate
 from typing import Sequence
 from datetime import date
-from execution import AlreadyExistsException, BadRequestException, DatabaseException
+from Error_handling.execution import AlreadyExistsException, BadRequestException, DatabaseException
 
 async def create_event(db: AsyncSession, event: EventIn) -> Event:
     new_event = Event(

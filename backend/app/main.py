@@ -7,7 +7,8 @@ from api.endpoints import events
 from api.endpoints import auth
 from db.database import init_db, async_session
 from services.event_service import detele_past_events
-from execution import DomainException
+from Error_handling.execution import DomainException
+from fastapi.middleware.cors import CORSMiddleware
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,6 @@ CLEANUP_INTERVAL_SECONDS = 3600
 
 
 async def cleanup_past_events_task():
-    """Background loop: deletes events whose date has passed."""
     while True:
         try:
             async with async_session() as session:
@@ -39,6 +39,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, title="EventHub API", version="1.0.0")
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.exception_handler(DomainException)
 async def domain_exception_handler(request: Request, exc: DomainException):

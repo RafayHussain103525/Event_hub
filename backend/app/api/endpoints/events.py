@@ -2,11 +2,9 @@ from datetime import date
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.dependencies import get_current_organizer
-from core.dependencies import get_current_user
 from schemas.events import EventIn, EventOut, EventUpdate
 from db.database import get_async_session
-from schemas.events import EventIn, EventOut
-from execution import AlreadyExistsException, BadRequestException, NotFoundException, ForbiddenException
+from Error_handling.execution import AlreadyExistsException, BadRequestException, NotFoundException, ForbiddenException
 from services.organizer_services import (
     get_organizer_by_id,
     get_organizer_by_name,
