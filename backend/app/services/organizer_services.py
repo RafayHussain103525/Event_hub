@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from db.model import Organizer
 from schemas.organizer import OrganizerIn
-from execution import AlreadyExistsException
+from Error_handling.execution import AlreadyExistsException
 from core.security import get_password_hash
 
 class OrganizerAlreadyExists(Exception):

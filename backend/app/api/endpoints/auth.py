@@ -17,10 +17,10 @@ from schemas.organizer import (
     TokenResponseOrganizer,
 )
 from schemas.user import UserIn, UserOut, UserLogin, TokenResponseUser
-from services.organizer_services import create_organizer
-from services.user_service import create_user
+from services.organizer_services import create_organizer, get_organizer_by_id
+from services.user_service import create_user, get_user_by_id
 from services.auth_services import authenticate_organizer, authenticate_user
-from execution import InvalidCredentialsException, BadRequestException
+from Error_handling.execution import InvalidCredentialsException, BadRequestException
 from datetime import datetime, timedelta, timezone
 import jwt
 
@@ -88,7 +88,7 @@ async def user_auth(payload: UserLogin, db: AsyncSession = Depends(get_async_ses
 
 
 @router.post("/refresh_token", response_model=RefreshTokenResponse)
-async def refresh_access_token(payload: RefreshTokenRequest):
+async def refresh_access_token(payload: RefreshTokenRequest, db: AsyncSession = Depends(get_async_session)):
     try:
         token_data = jwt.decode(
             payload.refresh_token, SECRET_KEY, algorithms=[ALGORITHM]
@@ -103,6 +103,14 @@ async def refresh_access_token(payload: RefreshTokenRequest):
             raise BadRequestException(detail="Invalid token payload")
 
         user_id = int(user_id)
+        if role == "organizer":
+            check_organizer = await get_organizer_by_id(db, user_id)
+            if not check_organizer:
+                raise InvalidCredentialsException(detail="Organizer not found")
+        elif role == "user":
+            check_user = await get_user_by_id(db, user_id)
+            if not check_user:
+                raise InvalidCredentialsException(detail="User not found")
         new_token_data = {"sub": str(user_id), "role": role}
         new_access_token = create_access_token(data=new_token_data)
         expires = REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60
@@ -113,3 +121,5 @@ async def refresh_access_token(payload: RefreshTokenRequest):
 
     except jwt.InvalidTokenError:
         raise InvalidCredentialsException(detail="Refresh token is invalid or expired")
+
+

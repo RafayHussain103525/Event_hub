@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from db.model import User
 from schemas.user import UserIn
-from execution import AlreadyExistsException
+from Error_handling.execution import AlreadyExistsException
 from core.security import get_password_hash
 
 

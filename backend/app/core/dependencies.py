@@ -1,5 +1,5 @@
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 import jwt
 from jwt.exceptions import InvalidTokenError
@@ -8,10 +8,12 @@ from db.database import get_async_session
 from core.security import SECRET_KEY, ALGORITHM
 from services.user_service import get_user_by_id
 from services.organizer_services import get_organizer_by_id
-from execution import InvalidCredentialsException
+from Error_handling.execution import InvalidCredentialsException
 from db.model import User, Organizer
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login/user")
+
+
 
 # Dependency to get the current authenticated user
 async def get_current_user(
