@@ -22,7 +22,14 @@ export const getRefreshToken = () => {
 
 export const getUserData = () => {
   const userData = localStorage.getItem(TOKEN_KEYS.USER_DATA);
-  return userData ? JSON.parse(userData) : null;
+  if (!userData) return null;
+  
+  try {
+    return JSON.parse(userData);
+  } catch (error) {
+    localStorage.removeItem(TOKEN_KEYS.USER_DATA);
+    return null;
+  }
 };
 
 export const getUserRole = () => {

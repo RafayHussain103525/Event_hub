@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { loginUser, loginOrganizer, signupUser, signupOrganizer, logout as apiLogout } from '../api/auth';
-import { getUserData, getUserRole, isAuthenticated } from '../utils/token';
+import { getUserData, getUserRole, isAuthenticated, clearTokens } from '../utils/token';
 
 export const useAuth = () => {
   const [user, setUser] = useState(null);
@@ -106,9 +106,9 @@ export const useAuth = () => {
   }, []);
 
   const logout = useCallback(() => {
-    apiLogout();
-    setUser(null);
-    setRole(null);
+  clearTokens();
+  setUser(null);
+  setRole(null);
   }, []);
 
   return {
