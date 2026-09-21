@@ -1,15 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-
-// Common components
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
-
-// Auth guard components
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RoleRoute from './components/auth/RoleRoute';
-
-// Pages
 import Home from './pages/Home';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
@@ -19,7 +13,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
-
+import EditEvent from './pages/EditEvent';
 function App() {
   return (
     <AuthProvider>
@@ -62,6 +56,13 @@ function App() {
                 </RoleRoute>
               }
             />
+            <Route path="/edit-event/:id" 
+            element={
+              <RoleRoute requiredRole="organizer">
+                <EditEvent />
+              </RoleRoute>
+            } />
+        
 
             {/* 404 — must be last */}
             <Route path="*" element={<NotFound />} />

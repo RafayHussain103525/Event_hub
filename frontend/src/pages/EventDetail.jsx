@@ -4,13 +4,24 @@ import { useAuth } from '../hooks/useAuth';
 import Loading from '../components/common/Loading';
 import ErrorDisplay from '../components/common/ErrorDisplay';
 import { formatDateWithDay, getDaysUntil } from '../utils/formatDate';
+import { useDeleteEvent } from '../hooks/useEvents';
 
 const EventDetail = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
   const { event, isLoading, error } = useEvent(eventId);
   const { user, role, isAuthenticated } = useAuth();
-
+  const { deleteExistingEvent } = useDeleteEvent();
+  const handleDeleteEvent = async () => {
+  if (window.confirm(`Delete "${event.name}"? This cannot be undone.`)) {
+    const result = await deleteExistingEvent(event.id);
+    if (result.success) {
+      navigate('/my-events'); 
+    } else {
+      alert(result.error);
+    }
+  }
+};
   if (isLoading) return <Loading message="Loading event details..." />;
   if (error) return <ErrorDisplay error={error} onRetry={() => navigate(0)} />;
 
@@ -177,10 +188,16 @@ const EventDetail = () => {
                 You are the organizer of this event.
               </p>
               <button
-                disabled
-                className="w-full bg-gray-800 text-gray-500 py-2 rounded-lg text-sm cursor-not-allowed"
+                onClick={() => navigate(`/edit-event/${event.id}`)}
+                className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg text-sm font-medium transition-colors"
               >
-                Edit (coming soon)
+                Edit Event
+              </button>
+                            <button
+                onClick={handleDeleteEvent}
+                className="w-full mt-2 border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                Delete Event
               </button>
             </div>
           )}

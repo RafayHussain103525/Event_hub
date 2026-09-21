@@ -56,11 +56,11 @@ export const createEvent = async (eventData) => {
 };
 
 export const updateEvent = async (eventId, eventData) => {
-  const response = await apiClient.put(`/events/${eventId}`, eventData);
+  const response = await apiClient.patch(`/events/${eventId}`, eventData);
   return response.data;
 };
 
 export const deleteEvent = async (eventId) => {
-  const response = await apiClient.delete(`/events/${eventId}`);
+  const response = await apiClient.delete(`/events/delete/${eventId}`);
   return response.data;
 };
