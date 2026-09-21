@@ -6,6 +6,11 @@ vi.mock('../client', () => ({
     post: vi.fn(),
     put: vi.fn(),
     delete: vi.fn(),
+    patch: vi.fn(),
+    interceptors: {
+      request: { use: vi.fn() },
+      response: { use: vi.fn() },
+  },
   },
 }));
 
@@ -160,13 +165,13 @@ describe('events API functions', () => {
   });
 
   describe('updateEvent', () => {
-    it('calls PUT /events/:id', async () => {
+    it('calls PATCH /events/:id', async () => {
       const updateData = { name: 'Updated Name' };
-      apiClient.put.mockResolvedValue({ data: { id: 1, ...updateData } });
+      apiClient.patch.mockResolvedValueOnce({ data: { id: 1, ...updateData } });
 
       await updateEvent(1, updateData);
 
-      expect(apiClient.put).toHaveBeenCalledWith('/events/1', updateData);
+      expect(apiClient.patch).toHaveBeenCalledWith('/events/1', updateData);
     });
   });
 
@@ -176,7 +181,7 @@ describe('events API functions', () => {
 
       await deleteEvent(1);
 
-      expect(apiClient.delete).toHaveBeenCalledWith('/events/1');
+      expect(apiClient.delete).toHaveBeenCalledWith('/events/delete/1');
     });
   });
 });

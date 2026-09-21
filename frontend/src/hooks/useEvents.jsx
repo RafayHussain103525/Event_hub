@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getAllEvents, getEventById, getMyEvents, createEvent } from '../api/events';
+import { getAllEvents, getEventById, getMyEvents, createEvent, updateEvent, deleteEvent } from '../api/events';
 
 export const useEvents = (params = {}) => {
   const [events, setEvents] = useState([]);
@@ -128,4 +128,49 @@ export const useCreateEvent = () => {
     error,
     success,
   };
+};
+
+export const useUpdateEvent = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const updateExistingEvent = useCallback(async (eventId, eventData) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await updateEvent(eventId, eventData);
+      return { success: true, event: data };
+    } catch (err) {
+      const detail = err.response?.data?.detail;
+      const errorMessage = Array.isArray(detail) ? detail.map(e => e.msg).join(', ') : (detail || 'Failed to update event');
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { updateExistingEvent, isLoading, error };
+  };
+
+export const useDeleteEvent = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const deleteExistingEvent = useCallback(async (eventId) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      await deleteEvent(eventId);
+      return { success: true };
+    } catch (err) {
+      const errorMessage = err.response?.data?.detail || 'Failed to delete event';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { deleteExistingEvent, isLoading, error };
 };
